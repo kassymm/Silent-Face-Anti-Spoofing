@@ -18,7 +18,7 @@ from src.utility import parse_model_name
 warnings.filterwarnings('ignore')
 
 
-SAMPLE_IMAGE_PATH = "./images/sample/"
+SAMPLE_IMAGE_PATH = "/Volumes/Transcend/Verigram/CelebA/archive/CelebA_Spoof_/CelebA_Spoof/Data/test/4930/live/"
 
 
 # 因为安卓端APK获取的视频流宽高比为3:4,为了与之一致，所以将宽高比限制为3:4
@@ -35,9 +35,9 @@ def test(image_name, model_dir, device_id):
     model_test = AntiSpoofPredict(device_id)
     image_cropper = CropImage()
     image = cv2.imread(SAMPLE_IMAGE_PATH + image_name)
-    result = check_image(image)
-    if result is False:
-        return
+    # result = check_image(image)
+    # if result is False:
+    #     return
     image_bbox = model_test.get_bbox(image)
     prediction = np.zeros((1, 3))
     test_speed = 0
