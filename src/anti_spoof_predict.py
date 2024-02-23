@@ -9,8 +9,8 @@ import os
 import cv2
 import math
 import torch
-import numpy as np
 import torch.nn.functional as F
+import numpy as np
 
 
 from src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
