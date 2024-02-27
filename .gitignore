@@ -1,1 +1,4 @@
 .idea
+__pycahce__
+.DS_Store
+dataset.csv
