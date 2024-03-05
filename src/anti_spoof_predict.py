@@ -90,6 +90,20 @@ class AntiSpoofPredict(Detection):
             result = self.model.forward(img)
             result = F.softmax(result).cpu().numpy()
         return result
+    
+    def extract_embeddings(self, img, model_path):
+        test_transform = trans.Compose([
+            trans.ToTensor(),
+        ])
+        img = test_transform(img)
+        img = img.unsqueeze(0).to(self.device)
+        self._load_model(model_path)
+        self.model.eval()
+        with torch.no_grad():
+            embeddings = self.model.forward(img)
+            embeddings = F.normalize(embeddings, p=2, dim=1)  # Normalize embeddings
+            embeddings = embeddings.cpu().numpy()
+        return embeddings
 
 
 

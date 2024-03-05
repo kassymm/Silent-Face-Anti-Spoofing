@@ -20,7 +20,7 @@ def test(image_path, model_dir="./resources/anti_spoof_models", device_id=0):
 
     image_bbox = model_test.get_bbox(image)
     prediction = np.zeros((1, 3))
-    test_speed = 0
+    # test_speed = 0
     # sum the prediction from single model's result
     for model_name in os.listdir(model_dir):
         h_input, w_input, model_type, scale = parse_model_name(model_name)
