@@ -9,6 +9,7 @@ from src.generate_patches import CropImage
 from src.utility import parse_model_name
 from src.model_lib.MiniFASNet import MiniFASNetV2
 
+
 # model_input_size = {
 #     "2.7_80x80_MiniFASNetV2.pth": (80, 80, 'MiniFASNetV2', 2.7),
 #     "4_0_0_80x80_MiniFASNetV1SE.pth" : (80, 80, 'MiniFASNetV1SE', 4.0)
@@ -87,8 +88,34 @@ def get_bn_embeddings(image_path, model_path="resources/anti_spoof_models/2.7_80
 
     return embedding
 
+def test_model(image_path, model_path="resources/anti_spoof_models/2.7_80x80_MiniFASNetV2.pth", device_id=0):
+    model_test = AntiSpoofPredict(device_id)
+    image_cropper = CropImage()
+    image = cv2.imread(image_path)
+
+    image_bbox = model_test.get_bbox(image)
+    # test_speed = 0
+    # sum the prediction from single model's result
+
+    model_name = os.path.splitext(os.path.basename(model_path))[0]
+    h_input, w_input, model_type, scale = parse_model_name(model_name)
+    param = {
+        "org_img": image,
+        "bbox": image_bbox,
+        "scale": scale,
+        "out_w": w_input,
+        "out_h": h_input,
+        "crop": True,
+    }
+    if scale is None:
+        param["crop"] = False
+    img = image_cropper.crop(**param)
+    prediction = model_test.predict(img, model_path)
+    return prediction
 image_path = "/Users/kassymmukhanbetiyar/Development/Verigram/CelebA/archive/CelebA_Spoof_/CelebA_Spoof/Data/test/3613/spoof/511091.png"
 
 
-embeddings = get_bn_embeddings(image_path)
-print(embeddings)
+# embeddings = get_embeddings(image_path)
+# print(embeddings)
+# prediction = test_model(image_path)
+# print(prediction)
