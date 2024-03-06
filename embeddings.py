@@ -36,7 +36,7 @@ def get_embeddings(image_path, model_path = "resources/anti_spoof_models/2.7_80x
     if scale is None:
         param["crop"] = False
     img = image_cropper.crop(**param)
-    embedding = model_test.extract_embeddings(img, model_path)
+    embedding = model_test.batchnorm_embeddings(img, model_path)
     return embedding
 
 # Example usage

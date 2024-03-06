@@ -104,6 +104,37 @@ class AntiSpoofPredict(Detection):
             embeddings = F.normalize(embeddings, p=2, dim=1)  # Normalize embeddings
             embeddings = embeddings.cpu().numpy()
         return embeddings
+    
+    def batchnorm_embeddings(self, img, model_path):
+        test_transform = trans.Compose([
+            trans.ToTensor(),
+        ])
+        img = test_transform(img)
+        img = img.unsqueeze(0).to(self.device)
+        self._load_model(model_path)
+        self.model.eval()
+        
+        with torch.no_grad():
+            layer_index = 201  # Index of the BatchNorm1d layer
+            embedding = None
+
+            def hook(module, input, output):
+                nonlocal embedding
+                embedding = output
+
+            # Register the hook to the desired layer
+            handle = self.model[layer_index].register_forward_hook(hook)
+            
+            # Forward pass
+            self.model.forward(img)
+            
+            # Remove the hook
+            handle.remove()
+            
+            # Normalize and convert the embedding to a numpy array
+            embedding = F.normalize(embedding, p=2, dim=1)
+            embedding = embedding.cpu().numpy()
+        return embedding
 
 
 
