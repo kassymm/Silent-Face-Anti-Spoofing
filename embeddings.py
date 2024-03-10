@@ -7,7 +7,7 @@ import numpy as np
 from src.anti_spoof_predict import AntiSpoofPredict
 from src.generate_patches import CropImage
 from src.utility import parse_model_name
-from src.model_lib.MiniFASNet import MiniFASNetV2
+from src.model_lib.MiniFASNet import MiniFASNet
 
 
 # model_input_size = {
@@ -50,6 +50,7 @@ keep_dict = {'1.8M': [32, 32, 103, 103, 64, 13, 13, 64, 26, 26,
                        52, 128, 26, 26, 128, 77, 77, 128, 26, 26, 128, 26, 26,
                        128, 308, 308, 128, 26, 26, 128, 26, 26, 128, 512, 512]
              }
+
 def get_bn_embeddings(image_path, model_path="resources/anti_spoof_models/2.7_80x80_MiniFASNetV2.pth", device_id=0):
     model_test = AntiSpoofPredict(device_id)
     image_cropper = CropImage()
@@ -72,7 +73,7 @@ def get_bn_embeddings(image_path, model_path="resources/anti_spoof_models/2.7_80
     img = image_cropper.crop(**param)
 
     # Load the weights of the pre-trained model
-    model = MiniFASNetV2(embedding_size=128, conv6_kernel=(7, 7), drop_p=0.2, num_classes=3, img_channel=3)
+    model = MiniFASNet(keep = keep_dict['1.8M_'], embedding_size=128, conv6_kernel=(7, 7), drop_p=0.2, num_classes=3, img_channel=3)
     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 
     # Set the model to evaluation mode
@@ -115,7 +116,8 @@ def test_model(image_path, model_path="resources/anti_spoof_models/2.7_80x80_Min
 image_path = "/Users/kassymmukhanbetiyar/Development/Verigram/CelebA/archive/CelebA_Spoof_/CelebA_Spoof/Data/test/3613/spoof/511091.png"
 
 
-# embeddings = get_embeddings(image_path)
-# print(embeddings)
+embeddings = get_bn_embeddings(image_path)
+print(embeddings)
+
 # prediction = test_model(image_path)
 # print(prediction)
