@@ -10,6 +10,7 @@ from torch.nn import Linear, Conv2d, BatchNorm1d, BatchNorm2d, PReLU, ReLU, Sigm
     AdaptiveAvgPool2d, Sequential, Module
 
 
+
 class L2Norm(Module):
     def forward(self, input):
         return F.normalize(input)

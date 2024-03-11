@@ -9,6 +9,7 @@ import os
 import cv2
 import math
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
@@ -90,46 +91,79 @@ class AntiSpoofPredict(Detection):
             result = self.model.forward(img)
             result = F.softmax(result).cpu().numpy()
         return result
-    
-    def extract_embeddings(self, img, model_path):
-        test_transform = trans.Compose([
-            trans.ToTensor(),
-        ])
-        img = test_transform(img)
-        img = img.unsqueeze(0).to(self.device)
-        self._load_model(model_path)
-        self.model.eval()
-        with torch.no_grad():
-            embeddings = self.model.forward(img)
-            embeddings = F.normalize(embeddings, p=2, dim=1)  # Normalize embeddings
-            embeddings = embeddings.cpu().numpy()
-        return embeddings
-    
-    def batchnorm_embeddings(self, img, model_path):
-        test_transform = trans.Compose([
-            trans.ToTensor(),
-        ])
-        img = test_transform(img)
-        img = img.unsqueeze(0).to(self.device)
-        
-        self._load_model(model_path)
-        self.model.eval()
-        
-        embedding = None
 
-        def hook(module, input, output):
-            nonlocal embedding
-            embedding = output
 
-        # Register the hook to the desired layer
-        self.model.batch_norm.register_forward_hook(hook)
-        
-        with torch.no_grad():
-            embeddings = self.model(img)
-            embeddings = F.normalize(embedding, p=2, dim=1)
-            embeddings = embeddings.cpu().numpy()
-        
-        return embeddings
+
+
+
+
+
+
+
+# def extract_embeddings(self, input_data):
+#     # Set the model to evaluation mode
+#     self.model.eval()
+
+#     # Create a hook to capture the output of the "Dropout-202" layer
+#     embeddings = []
+
+#     def capture_embeddings(module, input, output):
+#         embeddings.append(output)
+
+#     # Find the "Dropout-202" layer in the model
+#     for name, module in self.model.named_modules():
+#         if name == 'Dropout-202':
+#             module.register_forward_hook(capture_embeddings)
+#             break
+
+#     # Pass the input data through the model
+#     with torch.no_grad():
+#         _ = self.model(input_data)
+
+#     # Extract the embeddings from the captured outputs
+#     embeddings = embeddings[0]  # Assuming only one hook was registered
+#     return embeddings
+
+
+# def extract_embeddings(self, img, model_path):
+#     test_transform = trans.Compose([
+#         trans.ToTensor(),
+#     ])
+#     img = test_transform(img)
+#     img = img.unsqueeze(0).to(self.device)
+#     self._load_model(model_path)
+#     self.model.eval()
+#     with torch.no_grad():
+#         embeddings = self.model.forward(img)
+#         embeddings = F.normalize(embeddings, p=2, dim=1)  # Normalize embeddings
+#         embeddings = embeddings.cpu().numpy()
+#     return embeddings
+
+# def batchnorm_embeddings(self, img, model_path):
+#     test_transform = trans.Compose([
+#         trans.ToTensor(),
+#     ])
+#     img = test_transform(img)
+#     img = img.unsqueeze(0).to(self.device)
+    
+#     self._load_model(model_path)
+#     self.model.eval()
+    
+#     embedding = None
+
+#     def hook(module, input, output):
+#         nonlocal embedding
+#         embedding = output
+
+#     # Register the hook to the desired layer
+#     self.model.batch_norm.register_forward_hook(hook)
+    
+#     with torch.no_grad():
+#         embeddings = self.model(img)
+#         embeddings = F.normalize(embedding, p=2, dim=1)
+#         embeddings = embeddings.cpu().numpy()
+    
+#     return embeddings
 
 
 
