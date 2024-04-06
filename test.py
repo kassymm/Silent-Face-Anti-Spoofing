@@ -39,7 +39,7 @@ def test(image_path, model_dir="./resources/anti_spoof_models", device_id=0):
         
     label = np.argmax(prediction)
     value = prediction[0][label]/2
-    return label, value, prediction
+    return label, value
 
 
 if __name__ == "__main__":
